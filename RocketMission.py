@@ -86,7 +86,7 @@ arial_L = pygame.font.SysFont("arial", 100)
 # In[5]:
 
 
-#PacMan物件
+#Rocket物件
 class Rocket(pygame.sprite.Sprite):
     def __init__(self,x,dx,y,dy):
         super().__init__()
@@ -280,7 +280,7 @@ def reloadMeteorite():
 
 def playBGM():
     pygame.mixer.init()
-    pygame.mixer.music.set_volume(20)
+    pygame.mixer.music.set_volume(10)
     pygame.mixer.music.load("through_the_space.mp3")
     pygame.mixer.music.play()
 
@@ -289,7 +289,8 @@ def playBGM():
 
 
 def playgameover():
-    pygame.mixer.music.load("through_the_space.mp3")
+    pygame.mixer.music.set_volume(10)
+    pygame.mixer.music.load("GameOver.mp3")
     pygame.mixer.music.play()
 
 
@@ -365,6 +366,8 @@ while run:
     #偵測碰撞Meteorite
     for meteorite in Meteorite_list:
         if meteorite.rect.collidepoint(Rocket.x+25,Rocket.y+25):
+            Rocket.x=rt_x
+            Rocket.y=rt_y
             pygame.mixer.music.unload()
             playgameover()
             GameOver=True
@@ -394,34 +397,4 @@ while run:
     pygame.display.update()    
 
 pygame.quit()        
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
 
