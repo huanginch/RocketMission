@@ -28,9 +28,9 @@ Blue = (61,89,171)
 #定義視窗大小
 window_width = 1000
 window_height = 600
-#定義圖片大小
-IMAGEWIDTH = 100
-IMAGEHEIGHT = 100
+#定義隕石圖片大小
+IMAGEWIDTH = 50
+IMAGEHEIGHT = 50
 #Rocket初始參數
 rt_x = 550
 rt_y = 250
@@ -63,7 +63,7 @@ rocket_image = [pygame.image.load('RocketL.png').convert_alpha(),
             pygame.image.load('RocketR.png').convert_alpha(),
             pygame.image.load('RocketU.png').convert_alpha(),
             pygame.image.load('RocketD.png').convert_alpha()]
-ghost_image = ["stoneU.png", 
+meteorite_image = ["stoneU.png", 
                "stoneD.png", 
                "stoneL.png", 
                "stoneR.png"]
@@ -150,7 +150,7 @@ class FuelPack(pygame.sprite.Sprite):
 class Meteorite(pygame.sprite.Sprite):
     def __init__(self, width, height, x, y, widow_width, window_height, index):
         super().__init__()
-        self.raw_image = pygame.image.load(ghost_image[index]).convert_alpha()
+        self.raw_image = pygame.image.load(meteorite_image[index]).convert_alpha()
         self.image = pygame.transform.scale(self.raw_image, (width, height))
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
@@ -236,10 +236,8 @@ def createFuelPack():
         fp=FuelPack(10,10)
         
         #為燃料包設定一個隨機座標
-        fp.rect.x=random.randrange(window_width-75)
-        fp.rect.y=random.randrange(window_height-75)
-        
-        #fp.draw(windows_surface,dot_x,dot_y) #繪製食物
+        fp.rect.x=random.randrange(0,850)
+        fp.rect.y=random.randrange(42,window_height-75)
 
         #加入群組
         FuelPacks_list.add(fp)
@@ -248,6 +246,7 @@ def createFuelPack():
 # In[10]:
 
 
+#創建隕石
 def createMeteorite():
     x, y = 965,465   #1st隕石的起始位置
     index = 0
@@ -263,6 +262,7 @@ def createMeteorite():
 # In[11]:
 
 
+#移動隕石
 def reloadMeteorite():
     
     for meteorite in Meteorite_list:
@@ -278,25 +278,43 @@ def reloadMeteorite():
 # In[12]:
 
 
+def playBGM():
+    pygame.mixer.init()
+    pygame.mixer.music.set_volume(20)
+    pygame.mixer.music.load("through_the_space.mp3")
+    pygame.mixer.music.play()
+
+
+# In[13]:
+
+
+def playgameover():
+    pygame.mixer.music.load("through_the_space.mp3")
+    pygame.mixer.music.play()
+
+
+# In[14]:
+
+
 #創建PRocket
 Rocket = Rocket(rt_x,rt_dx,rt_y,rt_dy)
 
 
-# In[13]:
+# In[15]:
 
 
 #創建fuelpack
 createFuelPack()
 
 
-# In[14]:
+# In[16]:
 
 
 #創建meteorite
 createMeteorite()
 
 
-# In[15]:
+# In[17]:
 
 
 reload_ghost_event = USEREVENT + 1
@@ -305,11 +323,12 @@ pygame.time.set_timer(reload_ghost_event, 300)
 GameOver=False
 
 
-# In[16]:
+# In[18]:
 
 
 #main loop
 
+playBGM()
 run = True
 while run:
     clock.tick(FPS)
@@ -346,6 +365,8 @@ while run:
     #偵測碰撞Meteorite
     for meteorite in Meteorite_list:
         if meteorite.rect.collidepoint(Rocket.x+25,Rocket.y+25):
+            pygame.mixer.music.unload()
+            playgameover()
             GameOver=True
 
     if not GameOver:
@@ -366,6 +387,7 @@ while run:
         windows_surface.blit(yourscore, (395, 310))
         windows_surface.blit(playagain, (300, 350))
         if keys[pygame.K_SPACE]:
+            playBGM()
             score=0
             GameOver=False
 
